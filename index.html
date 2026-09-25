@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اسم المطعم الافتراضي | Restaurant Name Placeholder</title>
+    <meta name="description" content="قالب متجر ومطعم افتراضي متعدد اللغات لتصفح قائمة الطعام وطلب الوجبات أونلاين.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandRed: '#DC2626',
+                        brandGreen: '#16A34A',
+                        brandDark: '#111827',
+                        brandGold: '#D97706'
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts: Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+        .glass-nav { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); }
+        .hero-gradient { background: linear-gradient(135deg, rgba(17,24,39,0.9) 0%, rgba(220,38,38,0.7) 100%); }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 antialiased selection:bg-red-600 selection:text-white">
+
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-950 transition-opacity duration-700">
+        <div class="relative w-24 h-24 mb-6">
+            <div class="absolute inset-0 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+            <div class="absolute inset-3 border-4 border-green-600 border-b-transparent rounded-full animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-2xl font-black text-red-500"><i class="fa-solid fa-utensils"></i></div>
+        </div>
+        <h2 id="preloader-text" class="text-2xl font-bold text-white tracking-wider" data-i18n="brand_name">اسم المطعم الافتراضي</h2>
+        <p class="text-sm text-gray-400 mt-2" data-i18n="preloader_loading">جاري التحميل...</p>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-nav border-b border-gray-800 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo & Name -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-red-600 to-green-600 p-0.5 shadow-lg group-hover:scale-105 transition-transform">
+                    <div class="w-full h-full bg-gray-900 rounded-full flex items-center justify-center text-red-500 font-black text-xl">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                </div>
+                <div>
+                    <span id="nav-brand-title" class="block font-black text-lg sm:text-xl text-white tracking-tight" data-i18n="brand_name">اسم المطعم الافتراضي</span>
+                    <span id="nav-brand-sub" class="block text-xs text-green-400 font-medium" data-i18n="brand_sub">خدمة توصيل 24 ساعة 🛵</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm">
+                <a href="#hero" class="hover:text-red-500 transition-colors" data-i18n="nav_home">الرئيسية</a>
+                <a href="#offers" class="hover:text-red-500 transition-colors" data-i18n="nav_offers">العروض الخاصة</a>
+                <a href="#menu" class="hover:text-red-500 transition-colors" data-i18n="nav_menu">قائمة الطعام</a>
+                <a href="#about" class="hover:text-red-500 transition-colors" data-i18n="nav_about">من نحن</a>
+                <a href="#contact" class="hover:text-red-500 transition-colors" data-i18n="nav_contact">اتصل بنا</a>
+            </nav>
+
+            <!-- Actions: Language Toggle & Cart & Mobile Menu -->
+            <div class="flex items-center gap-4">
+                <!-- Language Toggle Button -->
+                <button id="lang-toggle-btn" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-bold border border-gray-700 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-globe text-red-500"></i>
+                    <span id="lang-text">EN</span>
+                </button>
+
+                <!-- Cart Trigger Button -->
+                <button id="cart-btn" class="relative bg-red-600 hover:bg-red-700 text-white p-2.5 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center justify-center">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-green-500 text-gray-950 font-black text-xs w-5 h-5 rounded-full flex items-center justify-center shadow-md">0</span>
+                </button>
+
+                <!-- Mobile Menu Hamburger -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white p-2 text-xl focus:outline-none">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-900 border-b border-gray-800 px-4 pt-2 pb-6 space-y-3">
+            <a href="#hero" class="block py-2 text-base font-medium hover:text-red-500 mobile-link" data-i18n="nav_home">الرئيسية</a>
+            <a href="#offers" class="block py-2 text-base font-medium hover:text-red-500 mobile-link" data-i18n="nav_offers">العروض الخاصة</a>
+            <a href="#menu" class="block py-2 text-base font-medium hover:text-red-500 mobile-link" data-i18n="nav_menu">قائمة الطعام</a>
+            <a href="#about" class="block py-2 text-base font-medium hover:text-red-500 mobile-link" data-i18n="nav_about">من نحن</a>
+            <a href="#contact" class="block py-2 text-base font-medium hover:text-red-500 mobile-link" data-i18n="nav_contact">اتصل بنا</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-gray-900">
+        <div class="absolute inset-0 z-0 opacity-40 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1920&auto=format&fit=crop');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/70 to-transparent z-10"></div>
+        
+        <div class="relative z-20 max-w-5xl mx-auto px-4 text-center py-20">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 font-bold text-sm mb-6 animate-pulse" data-i18n="hero_badge">
+                🔥 مطعم وجبات طازجة وعروض حصرية يومية
+            </span>
+            <h1 id="hero-title" class="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight mb-6 leading-tight" data-i18n="hero_title">
+                اسم المطعم الافتراضي
+            </h1>
+            <p id="hero-desc" class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10 font-normal leading-relaxed" data-i18n="hero_desc">
+                استمتع بأشهى الأطباق والمأكولات الطازجة المحضرة بكل حب. خدمة توصيل سريعة ومتاحة على مدار الساعة!
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#menu" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-lg shadow-xl shadow-red-600/30 transition-all hover:scale-105 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-utensils"></i>
+                    <span data-i18n="btn_menu">تصفح القائمة الآن</span>
+                </a>
+                <a href="https://wa.me/1234567890" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-lg shadow-xl shadow-green-600/30 transition-all hover:scale-105 flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                    <span data-i18n="btn_whatsapp">اطلب عبر واتساب</span>
+                </a>
+            </div>
+
+            <!-- Quick Info Bar -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 pt-10 border-t border-gray-800/80">
+                <div class="flex items-center justify-center gap-3 bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+                    <i class="fa-solid fa-clock text-green-400 text-xl"></i>
+                    <div class="text-right">
+                        <span class="block text-xs text-gray-400" data-i18n="info_hours_lbl">مواعيد العمل</span>
+                        <span class="block text-sm font-bold text-white" data-i18n="info_hours_val">مفتوح دائماً (24 ساعة)</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center gap-3 bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+                    <i class="fa-solid fa-location-dot text-red-500 text-xl"></i>
+                    <div class="text-right">
+                        <span class="block text-xs text-gray-400" data-i18n="info_loc_lbl">العنوان</span>
+                        <span class="block text-sm font-bold text-white" data-i18n="info_loc_val">العنوان الافتراضي، اسم المدينة</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center gap-3 bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+                    <i class="fa-solid fa-phone-volume text-brandGold text-xl"></i>
+                    <div class="text-right">
+                        <span class="block text-xs text-gray-400" data-i18n="info_phone_lbl">الخط الساخن</span>
+                        <span class="block text-sm font-bold text-white font-mono" dir="ltr">+00 00000000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offers Section -->
+    <section id="offers" class="py-20 bg-gradient-to-b from-gray-900 to-gray-950 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-red-500 font-bold uppercase tracking-widest text-sm" data-i18n="offer_subtitle">عروض مميزة وحصرية</span>
+                <h2 class="text-3xl sm:text-5xl font-black text-white mt-2" data-i18n="offer_title">العروض الاقتصادية</h2>
+                <div class="w-24 h-1 bg-red-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Offer Card 1 -->
+                <div class="bg-gray-900 rounded-2xl overflow-hidden border border-red-600/30 shadow-2xl flex flex-col justify-between hover:border-red-600 transition-all group">
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="bg-red-600/20 text-red-400 text-xs font-bold px-3 py-1 rounded-full border border-red-500/30" data-i18n="offer_tag">عرض مميز</span>
+                            <span class="text-2xl font-black text-green-400"><span id="offer1-price">50</span> <span class="text-sm font-normal" data-i18n="currency">جنيه</span></span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors" data-i18n="offer1_name">وجبة العرض الأول</h3>
+                        <p class="text-gray-400 text-sm mb-6" data-i18n="offer1_desc">وصف تفصيلي للعرض الأول يشمل المكونات الرئيسية والإضافات الخاصة.</p>
+                    </div>
+                    <div class="px-8 pb-8 pt-0">
+                        <button onclick="addToCart('offer1_name', 50, 'offers', 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=400&auto=format=crop')" class="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-all shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i>
+                            <span data-i18n="btn_add_cart">إضافة إلى السلة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Offer Card 2 -->
+                <div class="bg-gray-900 rounded-2xl overflow-hidden border border-green-600/30 shadow-2xl flex flex-col justify-between hover:border-green-600 transition-all group">
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="bg-green-600/20 text-green-400 text-xs font-bold px-3 py-1 rounded-full border border-green-500/30" data-i18n="offer_tag2">الأكثر طلباً</span>
+                            <span class="text-2xl font-black text-green-400"><span id="offer2-price">80</span> <span class="text-sm font-normal" data-i18n="currency">جنيه</span></span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors" data-i18n="offer2_name">وجبة العرض الثاني</h3>
+                        <p class="text-gray-400 text-sm mb-6" data-i18n="offer2_desc">وصف تفصيلي للعرض الثاني العائلي أو الفردي المشبع بأفضل سعر.</p>
+                    </div>
+                    <div class="px-8 pb-8 pt-0">
+                        <button onclick="addToCart('offer2_name', 80, 'offers', 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=400&auto=format=crop')" class="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold transition-all shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i>
+                            <span data-i18n="btn_add_cart">إضافة إلى السلة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categorized Menu Section -->
+    <section id="menu" class="py-20 bg-gray-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-red-500 font-bold uppercase tracking-widest text-sm" data-i18n="menu_subtitle">أشهى الأطباق والمأكولات</span>
+                <h2 class="text-3xl sm:text-5xl font-black text-white mt-2" data-i18n="menu_title">قائمة الطعام الشاملة</h2>
+                <div class="w-24 h-1 bg-red-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <!-- Category Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-3 mb-12">
+                <button onclick="filterCategory('all')" class="cat-btn active px-5 py-2.5 rounded-xl font-bold text-sm bg-red-600 text-white transition-all shadow-md" data-category="all" data-i18n="cat_all">الكل</button>
+                <button onclick="filterCategory('sandwiches')" class="cat-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-gray-900 text-gray-300 hover:bg-gray-800 transition-all border border-gray-800" data-category="sandwiches" data-i18n="cat_sandwiches">السندوتشات</button>
+                <button onclick="filterCategory('main')" class="cat-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-gray-900 text-gray-300 hover:bg-gray-800 transition-all border border-gray-800" data-category="main" data-i18n="cat_main">الأطباق الرئيسية</button>
+                <button onclick="filterCategory('grills')" class="cat-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-gray-900 text-gray-300 hover:bg-gray-800 transition-all border border-gray-800" data-category="grills" data-i18n="cat_grills">المشويات والوجبات</button>
+                <button onclick="filterCategory('desserts')" class="cat-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-gray-900 text-gray-300 hover:bg-gray-800 transition-all border border-gray-800" data-category="desserts" data-i18n="cat_desserts">الحلويات والمشروبات</button>
+            </div>
+
+            <!-- Menu Items Grid -->
+            <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Items populated dynamically via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gray-900 border-t border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-red-500 font-bold uppercase tracking-widest text-sm" data-i18n="about_subtitle">قصتنا وجودتنا</span>
+                    <h2 class="text-3xl sm:text-4xl font-black text-white mt-2 mb-6" data-i18n="about_title">عراقة المذاق وسرعة الخدمة</h2>
+                    <p class="text-gray-300 leading-relaxed mb-6" data-i18n="about_desc1">
+                        نقدم في مطعمنا أشهى المأكولات والمشروبات على مدار 24 ساعة. نحرص على استخدام أجود المكونات الطازجة لنضمن لكم طعماً لا يُنسى في كل وجبة.
+                    </p>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-8" data-i18n="about_desc2">
+                        سواء كنتم تبحثون عن وجبة سريعة، أو أطباق عائلية مميزة، نحن هنا لخدمتكم طوال اليوم مع خدمة توصيل سريعة وموثوقة حتى باب المنزل.
+                    </p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                        <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 text-center">
+                            <span class="block text-2xl font-black text-red-500">24/7</span>
+                            <span class="text-xs text-gray-400 mt-1 block" data-i18n="stat_hours">خدمة متواصلة</span>
+                        </div>
+                        <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 text-center">
+                            <span class="block text-2xl font-black text-green-500">10K+</span>
+                            <span class="text-xs text-gray-400 mt-1 block" data-i18n="stat_followers">زبون سعيد</span>
+                        </div>
+                        <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 text-center col-span-2 sm:col-span-1">
+                            <span class="block text-2xl font-black text-yellow-500">100%</span>
+                            <span class="text-xs text-gray-400 mt-1 block" data-i18n="stat_quality">طازج وساخن</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
+                        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format=crop" alt="Restaurant Interior" class="w-full h-[400px] object-cover hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent flex items-end p-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-bold">
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-white font-bold" data-i18n="quality_badge_title">جودة ممتازة</span>
+                                    <span class="text-xs text-gray-300" data-i18n="quality_badge_sub">خدمة متكاملة وضمان للطعم</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Location Section -->
+    <section id="contact" class="py-20 bg-gray-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-red-500 font-bold uppercase tracking-widest text-sm" data-i18n="contact_subtitle">تواصل معنا واطلب الآن</span>
+                <h2 class="text-3xl sm:text-5xl font-black text-white mt-2" data-i18n="contact_title">معلومات الاتصال والموقع</h2>
+                <div class="w-24 h-1 bg-red-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Contact Card 1 -->
+                <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 text-center hover:border-red-600 transition-all flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-2xl mb-6 border border-red-500/30">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2" data-i18n="card_phone_title">أرقام الهواتف</h3>
+                    <p class="text-gray-400 text-sm mb-4" data-i18n="card_phone_desc">اتصل بنا مباشرة لطلب دليفري سريع</p>
+                    <div class="space-y-1 font-mono text-sm font-bold text-green-400" dir="ltr">
+                        <p>+00 00000001</p>
+                        <p>+00 00000002</p>
+                    </div>
+                </div>
+
+                <!-- Contact Card 2 -->
+                <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 text-center hover:border-green-600 transition-all flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-green-600/20 text-green-500 flex items-center justify-center text-2xl mb-6 border border-green-500/30">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2" data-i18n="card_loc_title">عنوان الفرع</h3>
+                    <p class="text-gray-400 text-sm mb-4" data-i18n="card_loc_desc">قم بزيارتنا في فرعنا الرئيسي</p>
+                    <p class="text-white text-sm font-medium" data-i18n="info_loc_val">العنوان الافتراضي، اسم الشارع، المدينة</p>
+                </div>
+
+                <!-- Contact Card 3 -->
+                <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 text-center hover:border-yellow-500 transition-all flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-yellow-600/20 text-yellow-500 flex items-center justify-center text-2xl mb-6 border border-yellow-500/30">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2" data-i18n="card_hours_title">مواعيد العمل</h3>
+                    <p class="text-gray-400 text-sm mb-4" data-i18n="card_hours_desc">نحن في خدمتكم طوال الوقت</p>
+                    <span class="bg-green-500/20 text-green-400 font-bold px-4 py-1.5 rounded-full text-xs border border-green-500/30" data-i18n="status_open_badge">مفتوح الآن - 24 ساعة</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 border-t border-gray-900 py-12 text-center text-gray-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-red-600 to-green-600 p-0.5">
+                    <div class="w-full h-full bg-gray-900 rounded-full flex items-center justify-center text-red-500 font-black">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                </div>
+                <span class="font-bold text-white text-lg" data-i18n="brand_name">اسم المطعم الافتراضي</span>
+            </div>
+            <p class="mb-4" data-i18n="footer_rights">جميع الحقوق محفوظة © 2026 اسم المطعم الافتراضي</p>
+            <div class="flex justify-center gap-6 text-xl">
+                <a href="#" target="_blank" class="hover:text-red-500 transition-colors"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://wa.me/1234567890" target="_blank" class="hover:text-green-500 transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="tel:+0000000000" class="hover:text-yellow-500 transition-colors"><i class="fa-solid fa-phone"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Slide-over Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none hidden">
+        <div id="cart-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-auto"></div>
+        <div id="cart-panel" class="absolute top-0 right-0 h-full w-full max-w-md bg-gray-900 border-l border-gray-800 shadow-2xl flex flex-col translate-x-full transition-transform duration-300 pointer-events-auto">
+            <!-- Cart Header -->
+            <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-cart-shopping text-red-500 text-xl"></i>
+                    <h3 class="font-bold text-lg text-white" data-i18n="cart_title">سلة المشتريات</h3>
+                </div>
+                <button id="close-cart-btn" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-800">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items Container -->
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Populated via JS -->
+            </div>
+
+            <!-- Cart Footer / Checkout -->
+            <div class="p-6 border-t border-gray-800 bg-gray-950">
+                <div class="flex justify-between mb-4 font-bold">
+                    <span class="text-gray-400" data-i18n="cart_total">الإجمالي:</span>
+                    <span id="cart-total-price" class="text-green-400 text-lg">0 <span data-i18n="currency">جنيه</span></span>
+                </div>
+                <button onclick="openCheckoutModal()" id="checkout-trigger-btn" class="w-full py-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span data-i18n="btn_checkout">إتمام الطلب (الدفع عند الاستلام / واتساب)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 left-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <h3 class="text-2xl font-black text-white mb-2" data-i18n="modal_title">تأكيد طلب التوصيل</h3>
+            <p class="text-gray-400 text-sm mb-6" data-i18n="modal_subtitle">يرجى إدخال بيانات التوصيل الخاصة بك</p>
+
+            <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1" data-i18n="form_name">الاسم الكامل</label>
+                    <input type="text" id="order-name" required class="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-800 text-white focus:outline-none focus:border-red-500" placeholder="مثال: أحمد محمد">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1" data-i18n="form_phone">رقم الهاتف (واتساب)</label>
+                    <input type="tel" id="order-phone" required class="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-800 text-white focus:outline-none focus:border-red-500 font-mono" dir="ltr" placeholder="+00 00000000">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1" data-i18n="form_address">عنوان التوصيل بالتفصيل</label>
+                    <textarea id="order-address" required rows="2" class="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-800 text-white focus:outline-none focus:border-red-500" placeholder="المنطقة، الشارع، رقم البناء"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1" data-i18n="form_payment">طريقة الدفع</label>
+                    <select id="order-payment" class="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-800 text-white focus:outline-none focus:border-red-500">
+                        <option value="cash" data-i18n="pay_cash">الدفع نقداً عند الاستلام (Cash)</option>
+                        <option value="whatsapp" data-i18n="pay_wa">تأكيد الطلب عبر واتساب</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-4 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold transition-all shadow-lg mt-4 flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                    <span data-i18n="btn_send_order">إرسال الطلب عبر واتساب الآن</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Multi-Language Dictionary (Template Defaults)
+        const translations = {
+            ar: {
+                dir: 'rtl',
+                langCode: 'en',
+                langText: 'EN',
+                brand_name: 'اسم المطعم الافتراضي',
+                brand_sub: 'خدمة توصيل 24 ساعة 🛵',
+                preloader_loading: 'جاري التحميل...',
+                nav_home: 'الرئيسية',
+                nav_offers: 'العروض الخاصة',
+                nav_menu: 'قائمة الطعام',
+                nav_about: 'من نحن',
+                nav_contact: 'اتصل بنا',
+                hero_badge: '🔥 مطعم وجبات طازجة وعروض حصرية يومية',
+                hero_title: 'اسم المطعم الافتراضي',
+                hero_desc: 'استمتع بأشهى الأطباق والمأكولات الطازجة المحضرة بكل حب. خدمة توصيل سريعة ومتاحة على مدار الساعة!',
+                btn_menu: 'تصفح القائمة الآن',
+                btn_whatsapp: 'اطلب عبر واتساب',
+                info_hours_lbl: 'مواعيد العمل',
+                info_hours_val: 'مفتوح دائماً (24 ساعة)',
+                info_loc_lbl: 'العنوان',
+                info_loc_val: 'العنوان الافتراضي، اسم المدينة',
+                info_phone_lbl: 'الخط الساخن',
+                offer_subtitle: 'عروض مميزة وحصرية',
+                offer_title: 'العروض الاقتصادية',
+                offer_tag: 'عرض مميز',
+                offer_tag2: 'الأكثر طلباً',
+                offer1_name: 'وجبة العرض الأول',
+                offer1_desc: 'وصف تفصيلي للعرض الأول يشمل المكونات الرئيسية والإضافات الخاصة.',
+                offer2_name: 'وجبة العرض الثاني',
+                offer2_desc: 'وصف تفصيلي للعرض الثاني العائلي أو الفردي المشبع بأفضل سعر.',
+                btn_add_cart: 'إضافة إلى السلة',
+                menu_subtitle: 'أشهى الأطباق والمأكولات',
+                menu_title: 'قائمة الطعام الشاملة',
+                cat_all: 'الكل',
+                cat_sandwiches: 'السندوتشات',
+                cat_main: 'الأطباق الرئيسية',
+                cat_grills: 'المشويات والوجبات',
+                cat_desserts: 'الحلويات والمشروبات',
+                about_subtitle: 'قصتنا وجودتنا',
+                about_title: 'عراقة المذاق وسرعة الخدمة',
+                about_desc1: 'نقدم في مطعمنا أشهى المأكولات والمشروبات على مدار 24 ساعة. نحرص على استخدام أجود المكونات الطازجة لنضمن لكم طعماً لا يُنسى في كل وجبة.',
+                about_desc2: 'سواء كنتم تبحثون عن وجبة سريعة، أو أطباق عائلية مميزة، نحن هنا لخدمتكم طوال اليوم مع خدمة توصيل سريعة وموثوقة حتى باب المنزل.',
+                stat_hours: 'خدمة متواصلة',
+                stat_followers: 'زبون سعيد',
+                stat_quality: 'طازج وساخن',
+                quality_badge_title: 'جودة ممتازة',
+                quality_badge_sub: 'خدمة متكاملة وضمان للطعم',
+                contact_subtitle: 'تواصل معنا واطلب الآن',
+                contact_title: 'معلومات الاتصال والموقع',
+                card_phone_title: 'أرقام الهواتف',
+                card_phone_desc: 'اتصل بنا مباشرة لطلب دليفري سريع',
+                card_loc_title: 'عنوان الفرع',
+                card_loc_desc: 'قم بزيارتنا في فرعنا الرئيسي',
+                card_hours_title: 'مواعيد العمل',
+                card_hours_desc: 'نحن في خدمتكم طوال الوقت',
+                status_open_badge: 'مفتوح الآن - 24 ساعة',
+                footer_rights: 'جميع الحقوق محفوظة © 2026 اسم المطعم الافتراضي',
+                cart_title: 'سلة المشتريات',
+                cart_total: 'الإجمالي:',
+                btn_checkout: 'إتمام الطلب (الدفع عند الاستلام / واتساب)',
+                modal_title: 'تأكيد طلب التوصيل',
+                modal_subtitle: 'يرجى إدخال بيانات التوصيل الخاصة بك',
+                form_name: 'الاسم الكامل',
+                form_phone: 'رقم الهاتف (واتساب)',
+                form_address: 'عنوان التوصيل بالتفصيل',
+                form_payment: 'طريقة الدفع',
+                pay_cash: 'الدفع نقداً عند الاستلام (Cash)',
+                pay_wa: 'تأكيد الطلب عبر واتساب',
+                btn_send_order: 'إرسال الطلب عبر واتساب الآن',
+                currency: 'جنيه',
+                cart_empty: 'سلة المشتريات فارغة'
+            },
+            en: {
+                dir: 'ltr',
+                langCode: 'ar',
+                langText: 'AR',
+                brand_name: 'Default Restaurant Name',
+                brand_sub: '24/7 Delivery Service 🛵',
+                preloader_loading: 'Loading...',
+                nav_home: 'Home',
+                nav_offers: 'Special Offers',
+                nav_menu: 'Menu',
+                nav_about: 'About Us',
+                nav_contact: 'Contact',
+                hero_badge: '🔥 Fresh Meals & Exclusive Daily Offers',
+                hero_title: 'Default Restaurant Name',
+                hero_desc: 'Enjoy delicious and fresh meals prepared with care. Fast home delivery available 24/7!',
+                btn_menu: 'Browse Menu',
+                btn_whatsapp: 'Order via WhatsApp',
+                info_hours_lbl: 'Working Hours',
+                info_hours_val: 'Always Open (24 Hours)',
+                info_loc_lbl: 'Address',
+                info_loc_val: 'Default Address, City Name',
+                info_phone_lbl: 'Hotline',
+                offer_subtitle: 'Special & Exclusive Offers',
+                offer_title: 'Economic Deals',
+                offer_tag: 'Special Offer',
+                offer_tag2: 'Most Popular',
+                offer1_name: 'Offer Meal One',
+                offer1_desc: 'Detailed description for the first special deal including key ingredients.',
+                offer2_name: 'Offer Meal Two',
+                offer2_desc: 'Detailed description for the second combo deal with best price value.',
+                btn_add_cart: 'Add to Cart',
+                menu_subtitle: 'Exquisite Dishes & Meals',
+                menu_title: 'Comprehensive Menu',
+                cat_all: 'All',
+                cat_sandwiches: 'Sandwiches',
+                cat_main: 'Main Dishes',
+                cat_grills: 'Grills & Meals',
+                cat_desserts: 'Desserts & Drinks',
+                about_subtitle: 'Our Story & Quality',
+                about_title: 'Authentic Taste & Speedy Service',
+                about_desc1: 'We offer fresh meals and beverages 24/7. We ensure high-quality ingredients to deliver an unforgettable taste with every order.',
+                about_desc2: 'Whether you are looking for a quick snack or a full family meal, we are here all day to serve you with fast delivery to your doorstep.',
+                stat_hours: '24/7 Service',
+                stat_followers: 'Happy Customers',
+                stat_quality: 'Fresh & Hot',
+                quality_badge_title: 'Top Quality',
+                quality_badge_sub: 'Complete service & taste guarantee',
+                contact_subtitle: 'Contact Us & Order Now',
+                contact_title: 'Contact Information & Location',
+                card_phone_title: 'Phone Numbers',
+                card_phone_desc: 'Call us directly for fast delivery',
+                card_loc_title: 'Branch Address',
+                card_loc_desc: 'Visit us at our main location',
+                card_hours_title: 'Working Hours',
+                card_hours_desc: 'At your service around the clock',
+                status_open_badge: 'Open Now - 24 Hours',
+                footer_rights: 'All Rights Reserved © 2026 Default Restaurant Name',
+                cart_title: 'Shopping Cart',
+                cart_total: 'Total:',
+                btn_checkout: 'Proceed to Checkout (Cash / WhatsApp)',
+                modal_title: 'Confirm Delivery Order',
+                modal_subtitle: 'Please enter your delivery details',
+                form_name: 'Full Name',
+                form_phone: 'Phone Number (WhatsApp)',
+                form_address: 'Detailed Delivery Address',
+                form_payment: 'Payment Method',
+                pay_cash: 'Cash on Delivery',
+                pay_wa: 'Confirm Order via WhatsApp',
+                btn_send_order: 'Send Order via WhatsApp',
+                currency: 'USD',
+                cart_empty: 'Your cart is empty'
+            }
+        };
+
+        let currentLang = 'ar';
+
+        // Default Generic Menu Dataset
+        const menuItems = [
+            { id: 1, category: 'sandwiches', nameKey: 'item1_title', nameAr: 'ساندوتش كلاسيك', nameEn: 'Classic Sandwich', descAr: 'ساندوتش طازج مع المكونات الخاصة والصوص المميز', descEn: 'Fresh sandwich with signature ingredients and special sauce', price: 35, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=400&auto=format=crop' },
+            { id: 2, category: 'sandwiches', nameKey: 'item2_title', nameAr: 'ساندوتش سوبريم', nameEn: 'Supreme Sandwich', descAr: 'مزيج رائع من المكونات الطازجة مع الخبز المحمص', descEn: 'Great blend of fresh ingredients with toasted bread', price: 45, image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?q=80&w=400&auto=format=crop' },
+            { id: 3, category: 'main', nameKey: 'item3_title', nameAr: 'طبق رئيسي مميز', nameEn: 'Special Main Dish', descAr: 'طبق رئيسي مشبع يقدم مع الأرز والسلطات الطازجة', descEn: 'Satisfying main dish served with rice and fresh salad', price: 65, image: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=400&auto=format=crop' },
+            { id: 4, category: 'main', nameKey: 'item4_title', nameAr: 'وجبة فاخرة', nameEn: 'Premium Meal Box', descAr: 'وجبة متكاملة تحتوي على البروتين والإضافات اللذيذة', descEn: 'Complete meal box loaded with protein and tasty sides', price: 75, image: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=400&auto=format=crop' },
+            { id: 5, category: 'grills', nameKey: 'item5_title', nameAr: 'وجبة مشويات مشكلة', nameEn: 'Mixed Grill Combo', descAr: 'تشكيلة من المشويات الطازجة على الفحم مع المقبلات', descEn: 'Selection of fresh charcoal grilled items with appetizers', price: 120, image: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=400&auto=format=crop' },
+            { id: 6, category: 'grills', nameKey: 'item6_title', nameAr: 'طبق مشوي عائلي', nameEn: 'Family Grill Platter', descAr: 'وجبة عائلية كبيرة تناسب المشاركة مع الأهل والأصدقاء', descEn: 'Large family platter suitable for sharing', price: 200, image: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=400&auto=format=crop' },
+            { id: 7, category: 'desserts', nameKey: 'item7_title', nameAr: 'حلوى مشكلة', nameEn: 'Assorted Dessert', descAr: 'طبق حلوى طازج ولذيذ يناسب جميع الأذواق', descEn: 'Delicious fresh dessert dish suitable for all tastes', price: 40, image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=400&auto=format=crop' },
+            { id: 8, category: 'desserts', nameKey: 'item8_title', nameAr: 'مشروب منعش', nameEn: 'Refreshing Beverage', descAr: 'مشروب بارد ومنعش يحضر طازجاً عند الطلب', descEn: 'Cold refreshing drink freshly prepared upon order', price: 20, image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=400&auto=format=crop' }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('default_restaurant_cart')) || [];
+        let activeFilter = 'all';
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hide Preloader
+            setTimeout(() => {
+                const preloader = document.getElementById('preloader');
+                if (preloader) {
+                    preloader.style.opacity = '0';
+                    setTimeout(() => preloader.style.display = 'none', 700);
+                }
+            }, 800);
+
+            renderMenu(activeFilter);
+            updateCartUI();
+
+            // Language Toggle Event
+            document.getElementById('lang-toggle-btn').addEventListener('click', toggleLanguage);
+
+            // Mobile Menu Toggle
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                });
+            });
+
+            // Cart Drawer Events
+            document.getElementById('cart-btn').addEventListener('click', openCartDrawer);
+            document.getElementById('close-cart-btn').addEventListener('click', closeCartDrawer);
+            document.getElementById('cart-backdrop').addEventListener('click', closeCartDrawer);
+        });
+
+        // Toggle Language Function
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const t = translations[currentLang];
+
+            document.documentElement.setAttribute('dir', t.dir);
+            document.documentElement.setAttribute('lang', currentLang);
+            document.getElementById('lang-text').innerText = t.langText;
+
+            // Translate elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    el.innerText = t[key];
+                }
+            });
+
+            renderMenu(activeFilter);
+            updateCartUI();
+        }
+
+        // Render Menu Items
+        function renderMenu(category) {
+            const grid = document.getElementById('menu-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const filtered = category === 'all' ? menuItems : menuItems.filter(item => item.category === category);
+            const currencyLabel = translations[currentLang].currency;
+
+            filtered.forEach(item => {
+                const name = currentLang === 'ar' ? item.nameAr : item.nameEn;
+                const desc = currentLang === 'ar' ? item.descAr : item.descEn;
+
+                const card = document.createElement('div');
+                card.className = 'bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-red-600 transition-all shadow-xl flex flex-col justify-between group';
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${item.image}" alt="${name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-gray-950/80 backdrop-blur-md px-3 py-1 rounded-full text-green-400 font-bold text-sm border border-gray-800">
+                            ${item.price} ${currencyLabel}
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-red-500 transition-colors">${name}</h3>
+                            <p class="text-gray-400 text-sm mb-6">${desc}</p>
+                        </div>
+                        <button onclick="addToCart('${name}', ${item.price}, '${item.category}', '${item.image}')" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-red-600 text-white font-bold transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i>
+                            <span>${currentLang === 'ar' ? 'إضافة إلى السلة' : 'Add to Cart'}</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter Category
+        function filterCategory(cat) {
+            activeFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.getAttribute('data-category') === cat) {
+                    btn.className = 'cat-btn active px-5 py-2.5 rounded-xl font-bold text-sm bg-red-600 text-white transition-all shadow-md';
+                } else {
+                    btn.className = 'cat-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-gray-900 text-gray-300 hover:bg-gray-800 transition-all border border-gray-800';
+                }
+            });
+            renderMenu(cat);
+        }
+
+        // Cart Functions
+        function addToCart(nameKeyOrText, price, category, image) {
+            let name = nameKeyOrText;
+            if (translations[currentLang][nameKeyOrText]) {
+                name = translations[currentLang][nameKeyOrText];
+            }
+
+            const existing = cart.find(i => i.name === name);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ name, price, category, image, quantity: 1 });
+            }
+            saveCart();
+            updateCartUI();
+            openCartDrawer();
+        }
+
+        function updateQuantity(name, delta) {
+            const item = cart.find(i => i.name === name);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.name !== name);
+                }
+            }
+            saveCart();
+            updateCartUI();
+        }
+
+        function removeFromCart(name) {
+            cart = cart.filter(i => i.name !== name);
+            saveCart();
+            updateCartUI();
+        }
+
+        function saveCart() {
+            localStorage.setItem('default_restaurant_cart', JSON.stringify(cart));
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cart-badge');
+            const container = document.getElementById('cart-items-container');
+            const totalPriceEl = document.getElementById('cart-total-price');
+
+            const totalCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+            const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            const currencyLabel = translations[currentLang].currency;
+
+            if (badge) badge.innerText = totalCount;
+            if (totalPriceEl) totalPriceEl.innerText = `${totalPrice} ${currencyLabel}`;
+
+            if (!container) return;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fa-solid fa-cart-shopping text-4xl mb-3"></i>
+                        <p>${translations[currentLang].cart_empty}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            cart.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between bg-gray-950 p-4 rounded-xl border border-gray-800';
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${item.image}" alt="${item.name}" class="w-14 h-14 rounded-lg object-cover">
+                        <div>
+                            <h4 class="font-bold text-white text-sm">${item.name}</h4>
+                            <span class="text-green-400 text-xs font-bold">${item.price * item.quantity} ${currencyLabel}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="updateQuantity('${item.name}', -1)" class="w-7 h-7 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center text-white">-</button>
+                        <span class="text-sm font-bold w-5 text-center">${item.quantity}</span>
+                        <button onclick="updateQuantity('${item.name}', 1)" class="w-7 h-7 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center text-white">+</button>
+                        <button onclick="removeFromCart('${item.name}')" class="text-red-500 hover:text-red-400 p-1 ml-2"><i class="fa-solid fa-trash text-sm"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function openCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            const backdrop = document.getElementById('cart-backdrop');
+            const panel = document.getElementById('cart-panel');
+
+            if (!drawer) return;
+            drawer.classList.remove('hidden');
+            setTimeout(() => {
+                if (backdrop) backdrop.classList.remove('opacity-0');
+                if (panel) panel.classList.remove('translate-x-full');
+            }, 10);
+        }
+
+        function closeCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            const backdrop = document.getElementById('cart-backdrop');
+            const panel = document.getElementById('cart-panel');
+
+            if (backdrop) backdrop.classList.add('opacity-0');
+            if (panel) panel.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (drawer) drawer.classList.add('hidden');
+            }, 300);
+        }
+
+        // Checkout Modal Functions
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                alert(translations[currentLang].cart_empty);
+                return;
+            }
+            closeCartDrawer();
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const name = document.getElementById('order-name').value;
+            const phone = document.getElementById('order-phone').value;
+            const address = document.getElementById('order-address').value;
+            const payment = document.getElementById('order-payment').value;
+            const currencyLabel = translations[currentLang].currency;
+
+            let orderSummary = `*طلب دليفري جديد - ${translations[currentLang].brand_name}*%0A%0A`;
+            orderSummary += `👤 *الاسم:* ${name}%0A`;
+            orderSummary += `📞 *الهاتف:* ${phone}%0A`;
+            orderSummary += `📍 *العنوان:* ${address}%0A`;
+            orderSummary += `💳 *الدفع:* ${payment === 'cash' ? 'نقداً عند الاستلام' : 'عبر واتساب'}%0A%0A`;
+            orderSummary += `🛒 *الطلبات:*%0A`;
+
+            cart.forEach(item => {
+                orderSummary += `- ${item.name} (×${item.quantity}) : ${item.price * item.quantity} ${currencyLabel}%0A`;
+            });
+
+            const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            orderSummary += `%0A💰 *الإجمالي الكلي:* ${totalPrice} ${currencyLabel}`;
+
+            // Replace with target WhatsApp number
+            const whatsappUrl = `https://wa.me/1234567890?text=${encodeURIComponent(orderSummary)}`;
+            
+            // Clear cart & close modal
+            cart = [];
+            saveCart();
+            updateCartUI();
+            closeCheckoutModal();
+
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
